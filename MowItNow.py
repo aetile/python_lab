@@ -28,7 +28,7 @@ class Mower:
         """
         parameters:
             name:       mower identifier (str)
-            limX:       mower abscissa (int)
+            limX:       mower abscissa limit (int)
             limY:       mower ordinate limit (int)
             X:          mower current abscissa (int)
             Y:          mower current ordinate (int)
@@ -42,16 +42,17 @@ class Mower:
         self.Y = int(Y)
         self.compass = compass.strip()
         self.step = {
-            "N": (lambda x, y: (x, min(y +1, self.limY))),
-            "S": (lambda x, y: (x, max(y -1, 0))),
-            "E": (lambda x, y: (min(x +1, self.limX), y)),
-            "W": (lambda x, y: (max(x -1, 0), y)),
+            "N": (lambda x, y: (x, min(y + 1, self.limY))),
+            "S": (lambda x, y: (x, max(y - 1, 0))),
+            "E": (lambda x, y: (min(x + 1, self.limX), y)),
+            "W": (lambda x, y: (max(x - 1, 0), y)),
         }
 
     def move(self, instructions, field_map):
         """
         parameters:
             instructions:   move instructions (str)
+            field_map:      mower field mapping (array)
 
         """
         for instr in instructions.strip():
@@ -126,7 +127,9 @@ class Field:
                 limit = inf.readline()
                 self.width, self.length = limit.split(" ")
                 self.width, self.length = int(self.width), int(self.length)
-                self.map = [[0 for i in range(self.width +1)] for j in range(self.length +1)]
+                self.map = [
+                    [0 for i in range(self.width + 1)] for j in range(self.length + 1)
+                ]
                 print(self.map)
                 # Additional lines gives mower position and instructions
                 position, instruction = inf.readline(), inf.readline().strip()
@@ -139,7 +142,13 @@ class Field:
                     # Mower has instructions: mower mows
                     log.info(name + " - Executing instruction: " + instruction)
                     self.map = currentmower.move(instruction, self.map)
-                    new_position = str(currentmower.X) + " " + str(currentmower.Y) + " " + currentmower.compass
+                    new_position = (
+                        str(currentmower.X)
+                        + " "
+                        + str(currentmower.Y)
+                        + " "
+                        + currentmower.compass
+                    )
                     log.info(name + " - New position is: " + new_position)
                     print(self.map)
                     # Process next mower
@@ -148,6 +157,7 @@ class Field:
         except EnvironmentError as err:
             print("Unexpected environment error: {0}".format(err))
         return self.mower_report()
+
 
 def main(argv):
     # Output file path
@@ -171,6 +181,7 @@ def main(argv):
 
     # Process data
     garden = Field(input_file, output_file)
+
 
 if __name__ == "__main__":
     main(sys.argv)
