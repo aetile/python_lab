@@ -22,6 +22,7 @@ This lab written with the following assertions:
       -> step
       -> turn left
       -> turn right
+- Finite-state is managed with dictionaries rather than if..elif statements
 - Mowers receive instructions from an input file containing field measures, mowers position and instructions
 - Mower field is a rectangular bitmap used to detect mower collisions:
        -> 0: no mower present
