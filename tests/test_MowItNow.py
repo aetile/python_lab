@@ -1,8 +1,10 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 
+import sys
 import os
 import unittest
+sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
 import MowItNow
 
 
@@ -21,6 +23,11 @@ class ExpectOutput(unittest.TestCase):
         element = MowItNow.main(input_file)
         self.assertListEqual(list(open(test_file)), list(open(ref_file)))
 
+    def mower_collision(self):
+       ref_file = os.getcwd() + "/mowercollision.out"
+       input_file = os.getcwd() + "/mowercollision.txt"
+       element = MowItNow.main(input_file)
+       self.assertListEqual(list(open(test_file)), list(open(ref_file)))
 
 if __name__ == "__main__":
     unittest.main()
