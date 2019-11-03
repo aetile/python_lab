@@ -9,7 +9,7 @@ Python libraries used in this lab are the following:
 
 ```
 sys:      used to pass arguments with sys.argv
-os:       used for retriveing files on the system
+os:       used for manipulating files on the system
 logging:  used to log events and errors
 pprint:   used for nice printing of 2D arrays
 ```
@@ -33,7 +33,7 @@ This lab was written with the following assertions:
 - Mowers act sequentially, one after the other
 - Mowers should ignore instructions asking them to cross field borders
 - Mowers should ignore instructions asking them to collide another mower
-- Mowers should report their final position after processing input file
+- Mowers should report their final position in an output file
 ```
 
 ### Executing the lab
