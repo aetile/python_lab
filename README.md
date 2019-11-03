@@ -15,7 +15,7 @@ pprint:   used for nice printing of 2D arrays
 ```
 
 ### Principles
-This lab written with the following assertions:
+This lab was written with the following assertions:
 
 ```
 - Mowers are finite-state machines which can do 1 of 3 actions when receiving an instruction:
@@ -23,7 +23,10 @@ This lab written with the following assertions:
       -> turn left
       -> turn right
 - Finite-state is managed with dictionaries rather than if..elif statements
-- Mowers receive instructions from an input file containing field measures, mowers position and instructions
+- Mowers receive instructions from an input file containing:
+       -> field measures
+       -> mower position
+       -> mower list of instructions
 - Mower field is a rectangular bitmap used to detect mower collisions:
        -> 0: no mower present
        -> 1: a mower is already there
