@@ -29,8 +29,11 @@ class Mower:
         """
         parameters:
             name:       mower identifier (str)
-            limit:      mower position limits (str)
-            position:   mower position (str)
+            limX:       mower abscissa (int)
+            limY:       mower ordinate limit (int)
+            X:          mower current abscissa (int)
+            Y:          mower current ordinate (int)
+            compass:    mower cardinal direction (char)
 
         """
         self.name = name
@@ -40,11 +43,30 @@ class Mower:
         self.Y = int(Y)
         self.compass = compass.strip()
         self.step = {
-            "N": (lambda x, y: (x, min(y + 1, self.limY))),
-            "S": (lambda x, y: (x, max(y - 1, 0))),
-            "E": (lambda x, y: (min(x + 1, self.limX), y)),
-            "W": (lambda x, y: (max(x - 1, 0), y)),
+            "N": (lambda x, y: (x, min(y +1, self.limY))),
+            "S": (lambda x, y: (x, max(y -1, 0))),
+            "E": (lambda x, y: (min(x +1, self.limX), y)),
+            "W": (lambda x, y: (max(x -1, 0), y)),
         }
+
+    def move(self, instructions, field_map):
+        """
+        parameters:
+            instructions:   move instructions (str)
+
+        """
+        for instr in instructions.strip():
+            if instr in self.rotate:
+                self.compass = self.orientations[self.compass][instr]
+            elif instr == self.forward:
+                x, y = self.step[self.compass](self.X, self.Y)
+                if field_map[x, y] == 0:
+                    field_map[x, y], field_map[self.X, self.Y] = 1, 0
+                    self.X, self.Y = x, y
+            else:
+                log.error("Invalid instruction: {}".format(instr))
+
+        return field_map
 
 
 class Field:
@@ -53,17 +75,19 @@ class Field:
 
     """
 
-    def __init__(self, width, length):
+    def __init__(self, input_file, output_file):
         """
         parameters:
-            limit:     field limits (str)
+            input_file:     input file containing data: field dimensions, mowers postions and instructions (file)
+            output_file:    output file for writing mowers final positions
 
         """
-        self.length = length
-        self.width = width
-        self.matrix = np.zeros(shape=(self.width + 1, self.length + 1))
+        self.input_file = input_file
+        self.output_file = output_file
+        self.width = 0
+        self.length = 0
         self.mowers = []
-        print(self.matrix)
+        self.mow()
 
     def mower_add(self, name, position):
         """
@@ -76,58 +100,35 @@ class Field:
         posX, posY = int(posX), int(posY)
         mower = Mower(name, self.width, self.length, posX, posY, orientation)
         self.mowers.append(mower)
-        self.matrix[mower.X, mower.Y] = 1
-        print(self.matrix)
+        self.map[mower.X, mower.Y] = 1
+        print(self.map)
         return mower
 
-    def mower_move(self, mower, instructions):
+    def mower_report(self):
         """
-        parameters:
-            mower:          mower instance to move
-            instructions:   move instructions (str)
-
         """
-        for instr in instructions.strip():
-            if instr in mower.rotate:
-                mower.compass = mower.orientations[mower.compass][instr]
-            elif instr == mower.forward:
-                x, y = mower.step[mower.compass](mower.X, mower.Y)
-                if self.matrix[x, y] == 0:
-                    self.matrix[x, y], self.matrix[mower.X, mower.Y] = 1, 0
-                    mower.X, mower.Y = x, y
-            else:
-                log.error("Invalid instruction: {}".format(instr))
-
-        print(self.matrix)
-        return str(mower.X) + " " + str(mower.Y) + " " + str(mower.compass)
-
-    def field_map(self, output_file):
         try:
-            with open(output_file, "w") as outf:
+            with open(self.output_file, "w") as outf:
                 for mow in self.mowers:
                     line = str(mow.X) + " " + str(mow.Y) + " " + mow.compass
                     outf.write(line + "\n")
         except EnvironmentError as err:
             print("Unexpected environment error: {0}".format(err))
-        return output_file
+        return self.output_file
 
-
-class Data:
-    """
-    Data processing class
-
-    """
-
-    def __init__(self, input_file, output_file):
+    def mow(self):
+        """
+        """
         try:
-            with open(input_file, "r") as inf:
+            with open(self.input_file, "r") as inf:
                 index = 0
                 inf.seek(0)
-                # Create mower field with line zero
+                # Create mower field bitmap with line zero
                 limit = inf.readline()
-                limX, limY = limit.split(" ")
-                limX, limY = int(limX), int(limY)
-                self.garden = Field(limX, limY)
+                self.width, self.length = limit.split(" ")
+                self.width, self.length = int(self.width), int(self.length)
+                self.map = np.zeros(shape=(self.width +1, self.length +1))
+                print(self.map)
                 # Additional lines gives mower position and instructions
                 position, instruction = inf.readline(), inf.readline().strip()
                 # Execute mower life
@@ -135,20 +136,19 @@ class Data:
                     name = "mower_" + str(index + 1)
                     # Mower has position: create mower instance
                     log.info(name + " - Position is: " + position)
-                    currentmower = self.garden.mower_add(name, position)
+                    currentmower = self.mower_add(name, position)
                     # Mower has instructions: mower mows
                     log.info(name + " - Executing instruction: " + instruction)
-                    new_position = self.garden.mower_move(currentmower, instruction)
+                    self.map = currentmower.move(instruction, self.map)
+                    new_position = str(currentmower.X) + " " + str(currentmower.Y) + " " + currentmower.compass
                     log.info(name + " - New position is: " + new_position)
+                    print(self.map)
                     # Process next mower
                     position, instruction = inf.readline(), inf.readline()
                     index += 1
         except EnvironmentError as err:
             print("Unexpected environment error: {0}".format(err))
-        self.garden.field_map(output_file)
-        with open(output_file) as outf:
-            print(outf.read())
-
+        return self.mower_report()
 
 def main(argv):
     # Output file path
@@ -171,8 +171,7 @@ def main(argv):
         raise RuntimeError("Invalid input file or file not found")
 
     # Process data
-    Data(input_file, output_file)
-
+    garden = Field(input_file, output_file)
 
 if __name__ == "__main__":
     main(sys.argv)
