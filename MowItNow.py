@@ -4,9 +4,11 @@
 import sys
 import os
 import logging
+import pprint
 
 log = logging.getLogger()
 log.setLevel("INFO")
+pp = pprint.PrettyPrinter(indent=4)
 
 
 class Mower:
@@ -52,7 +54,7 @@ class Mower:
         """
         parameters:
             instructions:   move instructions (str)
-            field_map:      mower field mapping (array)
+            field_map:      mower field bitmap (array)
 
         """
         for instr in instructions.strip():
@@ -79,7 +81,7 @@ class Field:
         """
         parameters:
             input_file:     input file containing data: field dimensions, mowers postions and instructions (file)
-            output_file:    output file for writing mowers final positions
+            output_file:    output file for writing mowers final positions (file)
 
         """
         self.input_file = input_file
@@ -101,7 +103,7 @@ class Field:
         mower = Mower(name, self.width, self.length, posX, posY, orientation)
         self.mowers.append(mower)
         self.map[mower.X][mower.Y] = 1
-        print(self.map)
+        pp.pprint(self.map)
         return mower
 
     def mower_report(self):
@@ -130,7 +132,7 @@ class Field:
                 self.map = [
                     [0 for i in range(self.width + 1)] for j in range(self.length + 1)
                 ]
-                print(self.map)
+                pp.pprint(self.map)
                 # Additional lines gives mower position and instructions
                 position, instruction = inf.readline(), inf.readline().strip()
                 # Execute mower life
@@ -150,7 +152,7 @@ class Field:
                         + currentmower.compass
                     )
                     log.info(name + " - New position is: " + new_position)
-                    print(self.map)
+                    pp.pprint(self.map)
                     # Process next mower
                     position, instruction = inf.readline(), inf.readline()
                     index += 1
