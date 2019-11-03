@@ -13,7 +13,6 @@ log.setLevel("INFO")
 class Mower:
     """
     Automated finite-state mower class
-
     """
 
     forward = "A"
@@ -34,7 +33,6 @@ class Mower:
             x:          mower current x position (int)
             y:          mower current y position (int)
             compass:    mower cardinal direction (char)
-
         """
         self.name = name
         self.lim_x = int(lim_x)
@@ -55,7 +53,6 @@ class Mower:
         parameters:
             instructions:   move instructions (str)
             field_map:      mower field bitmap (array)
-
         """
         for instr in instructions.strip():
             if instr in self.rotate:
@@ -78,7 +75,6 @@ class Mower:
 class Field:
     """
     Mower fleet field class
-
     """
 
     def __init__(self, in_fname, out_fname):
@@ -86,7 +82,6 @@ class Field:
         parameters:
             input_file:     input file containing data: field dimensions, mowers postions and instructions (file)
             output_file:    output file for writing mowers final positions (file)
-
         """
         self.in_fname = in_fname
         self.out_fname = out_fname
@@ -101,7 +96,6 @@ class Field:
         parameters:
             name:       mower identifier (str)
             position:   mower position (str)
-
         """
         pos_x, pos_y, orientation = position.split(" ")
         pos_x, pos_y = int(pos_x), int(pos_y)

@@ -37,10 +37,10 @@ This lab was written with the following assertions:
 ```
 
 ### Executing the lab
-Execute the MowItNow.py module with an input file name argument containing field measures, mowers position and instructions
+Execute the MowItNow.py module with the following arguments: input file name and output file name
 ```
 cd ./python_lab
-python MowItNow input.txt
+python MowItNow.py input.txt output.txt
 ```
 
 ### Running lab tests
