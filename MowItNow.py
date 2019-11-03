@@ -4,7 +4,6 @@
 import sys
 import os
 import logging
-import numpy as np
 
 log = logging.getLogger()
 log.setLevel("INFO")
@@ -60,8 +59,8 @@ class Mower:
                 self.compass = self.orientations[self.compass][instr]
             elif instr == self.forward:
                 x, y = self.step[self.compass](self.X, self.Y)
-                if field_map[x, y] == 0:
-                    field_map[x, y], field_map[self.X, self.Y] = 1, 0
+                if field_map[x][y] == 0:
+                    field_map[x][y], field_map[self.X][self.Y] = 1, 0
                     self.X, self.Y = x, y
             else:
                 log.error("Invalid instruction: {}".format(instr))
@@ -100,7 +99,7 @@ class Field:
         posX, posY = int(posX), int(posY)
         mower = Mower(name, self.width, self.length, posX, posY, orientation)
         self.mowers.append(mower)
-        self.map[mower.X, mower.Y] = 1
+        self.map[mower.X][mower.Y] = 1
         print(self.map)
         return mower
 
@@ -127,7 +126,7 @@ class Field:
                 limit = inf.readline()
                 self.width, self.length = limit.split(" ")
                 self.width, self.length = int(self.width), int(self.length)
-                self.map = np.zeros(shape=(self.width +1, self.length +1))
+                self.map = [[0 for i in range(self.width +1)] for j in range(self.length +1)]
                 print(self.map)
                 # Additional lines gives mower position and instructions
                 position, instruction = inf.readline(), inf.readline().strip()
