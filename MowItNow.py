@@ -5,9 +5,6 @@ import sys
 import os
 import logging
 import numpy as np
-import pdb
-
-#pdb.set_trace()
 
 log = logging.getLogger()
 log.setLevel("INFO")
@@ -25,7 +22,7 @@ class Mower:
         "N": {"D": "E", "G": "W"},
         "S": {"D": "W", "G": "E"},
         "E": {"D": "S", "G": "N"},
-        "W": {"D": "N", "G": "S"}
+        "W": {"D": "N", "G": "S"},
     }
 
     def __init__(self, name, limX, limY, X, Y, compass):
@@ -43,10 +40,10 @@ class Mower:
         self.Y = int(Y)
         self.compass = compass.strip()
         self.step = {
-            "N": (lambda x, y: (x, min(y +1, self.limY))),
-            "S": (lambda x, y: (x, max(y -1, 0))),
-            "E": (lambda x, y: (min(x +1, self.limX), y)),
-            "W": (lambda x, y: (max(x -1, 0), y)),
+            "N": (lambda x, y: (x, min(y + 1, self.limY))),
+            "S": (lambda x, y: (x, max(y - 1, 0))),
+            "E": (lambda x, y: (min(x + 1, self.limX), y)),
+            "W": (lambda x, y: (max(x - 1, 0), y)),
         }
 
 
@@ -90,7 +87,6 @@ class Field:
             instructions:   move instructions (str)
 
         """
-        #pdb.set_trace()
         for instr in instructions.strip():
             if instr in mower.rotate:
                 mower.compass = mower.orientations[mower.compass][instr]
@@ -152,6 +148,7 @@ class Data:
         self.garden.field_map(output_file)
         with open(output_file) as outf:
             print(outf.read())
+
 
 def main(argv):
     # Output file path
