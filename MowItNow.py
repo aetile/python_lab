@@ -64,7 +64,10 @@ class Mower:
                 x, y = self.step[self.compass](self.x, self.y)
                 # Collision detection: if destination bit is 1 a mower is already present: instruction is ignored
                 if not field_map[x][y]:
-                    field_map[self.lim_y - y][x], field_map[self.lim_y - self.y][self.x] = 1, 0
+                    (
+                        field_map[self.lim_y - y][x],
+                        field_map[self.lim_y - self.y][self.x],
+                    ) = (1, 0)
                     self.x, self.y = x, y
             else:
                 log.error("Invalid instruction: {}".format(instr))
@@ -105,7 +108,7 @@ class Field:
         mower = Mower(name, self.width, self.length, pos_x, pos_y, orientation)
         self.mowers.append(mower)
         self.map[self.length - mower.y][mower.x] = 1
-        log.info('Current bitmap:\n' + pformat(self.map))
+        log.info("Current bitmap:\n" + pformat(self.map))
         return mower
 
     def mower_report(self):
@@ -133,7 +136,7 @@ class Field:
                 self.map = [
                     [0 for i in range(self.width + 1)] for j in range(self.length + 1)
                 ]
-                log.info('Current bitmap:\n' + pformat(self.map))
+                log.info("Current bitmap:\n" + pformat(self.map))
                 # Additional lines gives mower position and instructions
                 position, instruction = hf.readline(), hf.readline().strip()
                 # Execute mower life
@@ -153,7 +156,7 @@ class Field:
                         + currentmower.compass
                     )
                     log.info(name + " - New position is: " + new_position)
-                    log.info('Current bitmap:\n' + pformat(self.map))
+                    log.info("Current bitmap:\n" + pformat(self.map))
                     # Process next mower
                     position, instruction = hf.readline(), hf.readline()
                     index += 1
