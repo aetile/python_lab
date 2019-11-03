@@ -166,9 +166,6 @@ class Field:
 
 
 def main(argv):
-    # Output file path
-    output_filename = os.getcwd() + "/MowItNow.out"
-
     # Logging handler
     handler = logging.StreamHandler()
     handler.setFormatter(
@@ -176,12 +173,13 @@ def main(argv):
     )
     log.addHandler(handler)
 
-    # Expecting one argument
-    if len(argv) == 1:
-        raise RuntimeError("No argument specified")
+    # Expecting two arguments
+    if len(argv) <= 2:
+        raise RuntimeError("Expecting 2 arguments: input file name and output file name")
     input_filename = argv[1]
+    output_filename = argv[2]
 
-    # Expecting an input file
+    # Expecting valid input file
     if not os.path.isfile(input_filename):
         raise RuntimeError("Invalid input file or file not found")
 
